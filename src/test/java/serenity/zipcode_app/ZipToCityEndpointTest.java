@@ -3,12 +3,14 @@ package serenity.zipcode_app;
 import io.restassured.RestAssured;
 import net.serenitybdd.junit5.SerenityTest;
 import net.serenitybdd.rest.Ensure;
+import net.serenitybdd.rest.SerenityRest;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvFileSource;
 import org.junit.jupiter.params.provider.ValueSource;
 
 import static net.serenitybdd.rest.SerenityRest.*;
@@ -27,7 +29,8 @@ public class ZipToCityEndpointTest {
 
     @AfterAll
     public static void cleanUp() {
-        reset();
+        RestAssured.reset();
+        SerenityRest.clear();
     }
 
     @DisplayName("Testing 1 zip code and get the result")
@@ -63,6 +66,26 @@ public class ZipToCityEndpointTest {
 
         Ensure.that("We got successful result " , v->v.statusCode(200));
 
+    }
+
+    /*
+    {index} ---> to represent iteration number
+    {arguments} -->
+    {methodParameterIndexNumber} -->
+
+     */
+    // 😍  is the number in the parameterized test
+
+    @ParameterizedTest(name = "Iteration number {index} :zipcode is {arguments} \uD83D\uDE0D")
+    @ValueSource(strings = {"22030", "22031", "22032","22034" ,"22035"} )
+    public void testDisplayNameManipulation( String zip  ){
+
+    }
+
+
+    @ParameterizedTest(name = "Iteration number {index} Country is {0}" )
+    @CsvFileSource(resources = "/country_zip.csv" , numLinesToSkip = 1)
+    public void testDisplayNameManipulation( String country, int zip  ){
 
     }
 
