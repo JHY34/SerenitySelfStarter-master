@@ -10,19 +10,22 @@ import java.util.Map;
 import static net.serenitybdd.rest.SerenityRest.*;
 import static org.hamcrest.Matchers.*;
 
-@SerenityTest
+
 @TestMethodOrder(MethodOrderer.DisplayName.class)
-public class SpartanAdminCRUD {
+@SerenityTest
+public class SpartanAdminCRUD_Test {
+
+    //    private static RequestSpecification adminSpec ;
 
     @BeforeAll
     public static void setUp() {
-        RestAssured.baseURI = "http://54.90.101.103:8000";
+        RestAssured.baseURI = "http://54.158.11.99:8000";
         RestAssured.basePath = "/api";
 
         // this is setting static field of rest assured class requestSpecification
         // to the value we specified,
-        // so it become global evert test in this case 
-        RestAssured.requestSpecification = given().auth().basic("admin" , "admin");
+        // so it become global evert test in this case
+        // adminSpec = given().auth().basic("admin","admin") ;
     }
     @AfterAll
     public static void cleanUp(){
@@ -70,9 +73,38 @@ public class SpartanAdminCRUD {
 
         when().get("/spartans/{id}" , newID);
 
-        Ensure.that("We can access newly generated data" ,
-                thenResponse -> thenResponse.body(""))
+        Ensure.that("We can access newly generated data",
+                thenResponse-> thenResponse.statusCode(200) ) ;
 
+        // add all validation for body here as homework
+        // add put and patch as homework
+    }
+
+    @DisplayName("3.Admin Should be able to delete single data")
+    @Test
+    public void testDeleteOneData () {
+
+        // capture the id from the last request
+        int myId = lastResponse().jsonPath().getInt("data.id") ;
+
+        given()
+                .auth().basic("admin" , "admin")
+                .pathParam("id" , myId).
+        when()
+                .delete("/spartans/{id}");
+
+        Ensure.that("Request is successful" ,
+                thenResponse -> thenResponse.statusCode(204)) ;
+
+        // send another get request to makes sure you get 404
+        given()
+                .auth().basic("admin" , "admin")
+                .pathParam("id" , myId).
+                when()
+                .delete("/spartans/{id}");
+
+        Ensure.that("Delete was successful, Can not find data anymore" ,
+                thenResponse -> thenResponse.statusCode(404)) ;
 
     }
 
