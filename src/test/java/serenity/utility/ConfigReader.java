@@ -13,7 +13,6 @@ public class ConfigReader {
 
         return EnvironmentSpecificConfiguration.from (env).getProperty("propertyName");
 
-
     }
 
 
